@@ -15,10 +15,6 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phone: {
-    type: String,
-    required: true
-  },
   shopID: {
     type: String,
     required: true,

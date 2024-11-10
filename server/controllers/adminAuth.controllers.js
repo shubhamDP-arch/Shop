@@ -1,11 +1,20 @@
 const Admin = require("../models/admin.model.js"); 
 
 const crypto = require("crypto")
-const registerAuth  = async(req, res) =>{
+const registerAdmin  = async(req, res) =>{
 
   const {adminName, email, password, shopName} = req.body;
   const shopID = crypto.randomBytes(8).toString("hex");
   console.log(shopID)
+
+  const user = await Admin.find({email: email});
+  
+  if(user.length > 0){
+    console.log(user, "checcked")
+    return res.json({message:"User already registered"})
+  }
+
+  console.log("after")
   const admin = new Admin({
     adminName,
     email,

@@ -74,4 +74,11 @@ const scanProduct = async(req, res) => {
     console.log("fetchProduct", fetchProduct)
 }
 
-module.exports = {home, addProduct, scanProduct}
+const getProducts = async(req, res) => {
+    const shopid = req.shopid || "SHOP001"
+    const allProducts = await Products.find({shopid: shopid});
+    console.log(allProducts)
+    res.json({products: allProducts})
+}
+
+module.exports = {home, addProduct, scanProduct, getProducts}
