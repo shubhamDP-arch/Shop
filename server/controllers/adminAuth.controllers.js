@@ -1,5 +1,6 @@
+const { access } = require("fs");
 const Admin = require("../models/admin.model.js"); 
-
+const jwt = require("jsonwebtoken")
 const crypto = require("crypto")
 const registerAdmin  = async(req, res) =>{
 
@@ -29,20 +30,27 @@ const registerAdmin  = async(req, res) =>{
     savedAdmin
 )
 }
-
+ const admin = await Admin.findOne({email: email})
 const loginAuth = async(req, res) =>{
   const {email, password, adminName} = req.body
-  const admin = await Admin.findOne({email: email})
+
+  if (!admin) {
+    return res.status(404).json({ message: "Admin not found" })
+  }
   const isPasswordValid = await admin.isPasswordCorrect(password)
   if(!isPasswordValid){
-    throw new Error
+    return res.status(401).json({ message: "Incorrect password" });
+
 }
-  const {accessToken} = await admin.generateAccessToken(user._id)
+  const accessToken = await admin.generateAccessToken(admin._id)
+  console.log(accessToken)
 
   return res.status(200).json(
-    {admin, accessToken}
-  )
+    {admin, accessToken }
 
+
+  )
+}
 
 }
 module.exports = {registerAdmin, loginAuth}
