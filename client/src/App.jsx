@@ -7,6 +7,7 @@ function App() {
         <BarcodeScanner/>
         <h1>Hii</h1>
         <h1>Shubham</h1>
+        <h1>Mallikarjuna</h1>
     </>
   )
 }
