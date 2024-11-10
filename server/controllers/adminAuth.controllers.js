@@ -43,4 +43,5 @@ const loginAuth = async(req, res) =>{
   )
 }
 
+
 module.exports = {registerAdmin, loginAuth}

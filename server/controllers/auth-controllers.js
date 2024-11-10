@@ -40,16 +40,14 @@ const addProduct = async(req, res) => {
 
   // Specify the file path to save the image
   const imageBuffer = Buffer.from(base64Data, "base64")
-  const imagesDir = path.join(__dirname, `images`);
+  const imagesDir = path.join(__dirname, "../../client/public/images");//file path changed check later
   if (!fs.existsSync(imagesDir)) {
       fs.mkdirSync(imagesDir);
   }
   
-  // Specify the file path to save the image
   const imagePath = path.join(imagesDir, `barcode${result}.png`);
   
 
-  // Write the image data to a file
   fs.writeFileSync(imagePath, imageBuffer);
   console.log('Barcode image saved successfully:', imagePath);
 
