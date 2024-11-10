@@ -5,6 +5,7 @@ function App() {
   return(
     <>
         <BarcodeScanner/>
+        <h1>Hii</h1>
     </>
   )
 }
