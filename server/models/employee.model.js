@@ -2,7 +2,7 @@ module.exports = mongoose.model("Employee", employeeSchema);
 const mongoose = require("mongoose");
 
 const employeeSchema = new mongoose.Schema({
-  EmployeeName: {
+  employeeName: {
     type: String,
     required: true,
   },

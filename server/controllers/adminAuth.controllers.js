@@ -29,7 +29,7 @@ const loginAuth = async(req, res) =>{
 )
   const isPasswordValid = await admin.isPasswordCorrect(password)
   if(!isPasswordValid){
-    throw new 
+    throw new Error
 }
   const {accessToken} = await admin.generateAccessToken(user._id)
 

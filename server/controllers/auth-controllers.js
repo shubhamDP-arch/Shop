@@ -59,10 +59,9 @@ const addProduct = async(req, res) => {
     }
 
     // Example usage
-    const barcodeId = result + productName.slice(0,4)
+    const barcodeId = (result + productName.slice(0,4)).trim()
     const imageName = `barcode${barcodeId}.png`
     generateBarcode(barcodeId);
-
     const createProduct = await Products.create({barcodeid: barcodeId,imagename: imageName, productname: productName, quantity: 0, price: 0, total_sold: 0, shopid: "SHOP001", productthreshold: 0} )
     console.log(createProduct)
     res.json({msg: 'Success'})
