@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose");
 
 const employeeSchema = new mongoose.Schema({
-  EmployeeName: {
+  employeeName: {
     type: String,
     required: true,
   },
@@ -17,10 +17,6 @@ const employeeSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-  },
-  phone: {
-    type: String,
-    required: true
   },
   shopID: {
     type: String,

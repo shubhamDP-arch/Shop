@@ -6,7 +6,17 @@ const registerAdmin  = async(req, res) =>{
 
   const {adminName, email, password, shopName} = req.body;
   const shopID = crypto.randomBytes(8).toString("hex");
+  console.log(email)
   console.log(shopID)
+
+  const user = await Admin.find({email: email});
+  
+  if(user.length > 0){
+    console.log(user, "checcked")
+    return res.json({message:"User already registered"})
+  }
+
+  console.log("after")
   const admin = new Admin({
     adminName,
     email,
@@ -20,28 +30,27 @@ const registerAdmin  = async(req, res) =>{
     savedAdmin
 )
 }
-
+ const admin = await Admin.findOne({email: email})
 const loginAuth = async(req, res) =>{
   const {email, password, adminName} = req.body
-  const admin = await Admin.findOne(
-    {
-        $or:[{adminName, email}]
-    }
-)
+
   if (!admin) {
     return res.status(404).json({ message: "Admin not found" })
   }
   const isPasswordValid = await admin.isPasswordCorrect(password)
   if(!isPasswordValid){
     return res.status(401).json({ message: "Incorrect password" });
+
 }
   const accessToken = await admin.generateAccessToken(admin._id)
   console.log(accessToken)
 
   return res.status(200).json(
     {admin, accessToken }
+
+
   )
 }
 
-
+}
 module.exports = {registerAdmin, loginAuth}

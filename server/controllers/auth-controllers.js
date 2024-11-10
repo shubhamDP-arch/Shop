@@ -2,19 +2,42 @@ const fs = require('fs');
 const path = require('path');
 const axios =  require("axios");
 const Products = require('../models/product.model');
+
 const supplierModel = require('../models/supplier.model');
+
+const mongoose = require("mongoose")
+
 
 const home = async(req, res) => {
     console.log("Hii Welcome to controllers")
     res.json({msg: "Hii Welcome to controllers"})
 }
-/// also creates supplier
-const addProduct = async(req, res) => {
 
+
+const addProduct = async(req, res) => {
+    console.log("Hii")
+
+    const name = req.body.productname;
+    const shopid = req.shopid || "HOP002"
+    const productName = name.toLowerCase();
+    console.log("Hiii Baby")
+
+    const product = await Products.findOne({productname: productName, shopid: shopid})
+
+<
     const productName = req.body.productname;
     /////////////
     const {supplierName, supplierEmail} = req.body;
     ///////////
+
+    if(product)
+    {
+        const imageName = product.imagename;
+        console.log(imageName)
+        return res.json({imagesource: imageName})
+    }
+
+
     function convertTextToNumber(text) {
         let numericValue = 0;
         for (let i = 0; i < text.length; i++) {
@@ -60,10 +83,10 @@ const addProduct = async(req, res) => {
     }
 
     // Example usage
-    const barcodeId = result + productName.slice(0,4)
+    const barcodeId = (result + productName.slice(0,3)+ shopid.slice(0,3)).trim()
     const imageName = `barcode${barcodeId}.png`
     generateBarcode(barcodeId);
-    
+
     const createProduct = await Products.create({barcodeid: barcodeId,imagename: imageName, productname: productName, quantity: 0, price: 0, total_sold: 0, shopid: "SHOP001", productthreshold: 0, supplierName:supplierName} )//////
     ///////////////////////////////////////////////////////////////////////////////////
     const existingSupplier = await supplierModel.findOne({ supplierName, supplierEmail });
@@ -79,8 +102,10 @@ const addProduct = async(req, res) => {
     ////////////////////////////////////////////////
     
     ////////////////////
+
+
     console.log(createProduct)
-    res.json({msg: 'Success'})
+    return res.json({imagesource: imageName})
 }
 
 const scanProduct = async(req, res) => {
@@ -90,4 +115,30 @@ const scanProduct = async(req, res) => {
     console.log("fetchProduct", fetchProduct)
 }
 
-module.exports = {home, addProduct, scanProduct}
+const getProducts = async(req, res) => {
+    const shopid = req.shopid || "SHOP001"
+    const allProducts = await Products.find({shopid: shopid});
+    console.log(allProducts)
+    res.json({products: allProducts})
+}
+
+const productDetails = async(req, res) => {
+    const productid = new mongoose.Types.ObjectId("672f6f53ca7e2e695a223529");
+
+    const product = await Products.findOne( {_id: new mongoose.Types.ObjectId(productid)});
+
+    return res.json(product)
+}
+
+const updateProduct = async(req, res) => {
+
+    const productid = new mongoose.Types.ObjectId("672f70f4114bc486efd1af20");
+    // {quantity, price, total_sold, productthreshold, supplierName} = req.body ||
+    const data =  {quantity:8, price:12, total_sold :32, productthreshold: 5, supplierName: 'Malli'}
+    console.log(data)
+    const updateProduct = await Products.updateOne({_id: productid}, {$set: data})
+    console.log(updateProduct)
+    return res.json(updateProduct)
+}
+
+module.exports = {home, addProduct, scanProduct, getProducts, productDetails, updateProduct}
