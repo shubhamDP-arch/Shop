@@ -2,16 +2,19 @@ const fs = require('fs');
 const path = require('path');
 const axios =  require("axios");
 const Products = require('../models/product.model');
+const supplierModel = require('../models/supplier.model');
 
 const home = async(req, res) => {
     console.log("Hii Welcome to controllers")
     res.json({msg: "Hii Welcome to controllers"})
 }
-
+/// also creates supplier
 const addProduct = async(req, res) => {
 
     const productName = req.body.productname;
-
+    /////////////
+    const {supplierName, supplierEmail} = req.body;
+    ///////////
     function convertTextToNumber(text) {
         let numericValue = 0;
         for (let i = 0; i < text.length; i++) {
@@ -22,7 +25,7 @@ const addProduct = async(req, res) => {
     }
 
     const result = convertTextToNumber(productName);
-
+    
     async function generateBarcode(result) {
         const apiUrl = `https://barcodeapi.org/api/${result}`;
 
@@ -60,8 +63,22 @@ const addProduct = async(req, res) => {
     const barcodeId = result + productName.slice(0,4)
     const imageName = `barcode${barcodeId}.png`
     generateBarcode(barcodeId);
-
-    const createProduct = await Products.create({barcodeid: barcodeId,imagename: imageName, productname: productName, quantity: 0, price: 0, total_sold: 0, shopid: "SHOP001", productthreshold: 0} )
+    
+    const createProduct = await Products.create({barcodeid: barcodeId,imagename: imageName, productname: productName, quantity: 0, price: 0, total_sold: 0, shopid: "SHOP001", productthreshold: 0, supplierName:supplierName} )//////
+    ///////////////////////////////////////////////////////////////////////////////////
+    const existingSupplier = await supplierModel.findOne({ supplierName, supplierEmail });
+    if (existingSupplier) {
+        existingSupplier.products.push(productName);
+        console.log(existingSupplier)
+        await existingSupplier.save();
+    } else {
+        const newSupplier = await supplierModel.create({ supplierName, supplierEmail, products: [productName] });
+        console.log(newSupplier)
+        await newSupplier.save();
+    }
+    ////////////////////////////////////////////////
+    
+    ////////////////////
     console.log(createProduct)
     res.json({msg: 'Success'})
 }
