@@ -5,6 +5,7 @@ const registerAdmin  = async(req, res) =>{
 
   const {adminName, email, password, shopName} = req.body;
   const shopID = crypto.randomBytes(8).toString("hex");
+  console.log(email)
   console.log(shopID)
 
   const user = await Admin.find({email: email});
@@ -31,11 +32,7 @@ const registerAdmin  = async(req, res) =>{
 
 const loginAuth = async(req, res) =>{
   const {email, password, adminName} = req.body
-  const admin = Admin.findOne(
-    {
-        $or:[{adminName, email}]
-    }
-)
+  const admin = await Admin.findOne({email: email})
   const isPasswordValid = await admin.isPasswordCorrect(password)
   if(!isPasswordValid){
     throw new Error
@@ -43,9 +40,9 @@ const loginAuth = async(req, res) =>{
   const {accessToken} = await admin.generateAccessToken(user._id)
 
   return res.status(200).json(
-    {admin, }
+    {admin, accessToken}
   )
 
 
 }
-module.exports = {registerAdmin}
+module.exports = {registerAdmin, loginAuth}
