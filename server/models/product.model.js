@@ -32,6 +32,10 @@ const productSchema = new mongoose.Schema({
   productthreshold: {
     type: Number,
   },
+  supplierName: {
+    type: String,
+    default: ""
+  }
 });
 
 const Products = mongoose.model("Product", productSchema);
