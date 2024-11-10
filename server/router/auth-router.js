@@ -6,6 +6,6 @@ const { registerAuth } = require("../controllers/adminAuth.controllers");
 router.route("/").get(authControllers.home)
 router.route("/addproduct").post(authControllers.addProduct);
 router.route("/scanproduct").post(authControllers.scanProduct)
-router.route("/sign-up/Admin").post(registerAuth)
+router.route("/sign-up/Admin").post(registerAdmin)
 
 module.exports = router
