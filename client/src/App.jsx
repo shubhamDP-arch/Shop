@@ -1,13 +1,16 @@
-import './App.css'
 import BarcodeScanner from './pages/react'
+import {BrowserRouter, Routes, Route} from "react-router-dom"
+import { Home } from './pages/home'
 
 function App() {
   return(
     <>
-        <BarcodeScanner/>
-        <h1>Hii</h1>
-        <h1>Shubham</h1>
-        <h1>Mallikarjuna</h1>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Home/>}/>
+          </Routes>
+
+        </BrowserRouter>
     </>
   )
 }
