@@ -25,12 +25,8 @@ const registerEmployee  = async(req, res) =>{
 }
 
 const loginEmployee = async(req, res) =>{
-  const {email, password, employeeName} = req.body
-  const employee = await employeeModel.findOne(
-    {
-        $or:[{employeeName, email}]
-    }
-)
+  const {email, password} = req.body
+  const employee = await employeeModel.findOne({email: email})
   if (!employee) {
     return res.status(404).json({ message: "Admin not found" })
   }

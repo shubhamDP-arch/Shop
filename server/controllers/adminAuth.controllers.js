@@ -30,10 +30,10 @@ const registerAdmin  = async(req, res) =>{
     savedAdmin
 )
 }
- const admin = await Admin.findOne({email: email})
+ 
 const loginAuth = async(req, res) =>{
   const {email, password, adminName} = req.body
-
+  const admin = await Admin.findOne({email: email})
   if (!admin) {
     return res.status(404).json({ message: "Admin not found" })
   }
@@ -47,10 +47,8 @@ const loginAuth = async(req, res) =>{
 
   return res.status(200).json(
     {admin, accessToken }
-
-
   )
 }
 
-}
+
 module.exports = {registerAdmin, loginAuth}

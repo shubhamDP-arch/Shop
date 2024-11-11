@@ -19,13 +19,11 @@ const addProduct = async(req, res) => {
 
     const name = req.body.productname;
     const shopid = req.shopid || "HOP002"
-    const productName = name.toLowerCase();
     console.log("Hiii Baby")
+    const productName = req.body.productname;
 
     const product = await Products.findOne({productname: productName, shopid: shopid})
 
-<
-    const productName = req.body.productname;
     /////////////
     const {supplierName, supplierEmail} = req.body;
     ///////////
@@ -88,7 +86,6 @@ const addProduct = async(req, res) => {
     generateBarcode(barcodeId);
 
     const createProduct = await Products.create({barcodeid: barcodeId,imagename: imageName, productname: productName, quantity: 0, price: 0, total_sold: 0, shopid: "SHOP001", productthreshold: 0, supplierName:supplierName} )//////
-    ///////////////////////////////////////////////////////////////////////////////////
     const existingSupplier = await supplierModel.findOne({ supplierName, supplierEmail });
     if (existingSupplier) {
         existingSupplier.products.push(productName);
@@ -112,7 +109,8 @@ const scanProduct = async(req, res) => {
     const {data} = req.body;
     console.log("data", data)
     const fetchProduct = await Products.findOne({barcodeid: data})
-    console.log("fetchProduct", fetchProduct)
+    console.log(fetchProduct.productname)
+    return res.json({productname: fetchProduct.productname})
 }
 
 const getProducts = async(req, res) => {

@@ -36,8 +36,8 @@ const productSchema = new mongoose.Schema({
   supplierName:{
     type:String,
     required: true
-
-});
+  }
+})
 
 const Products = mongoose.model("Product", productSchema);
 
