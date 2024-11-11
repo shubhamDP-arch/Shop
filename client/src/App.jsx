@@ -1,19 +1,22 @@
-import BarcodeScanner from './pages/react'
-import {BrowserRouter, Routes, Route} from "react-router-dom"
-import { Login } from './pages/login'
+import { useState } from 'react'
+import Login from './Components/Login'
 
-function App() {
-  return(
-    <>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/login' element={<Login/>}/>
-            <Route path='/scan' element={<BarcodeScanner/>}/>
-          </Routes>
-
-        </BrowserRouter>
-    </>
-  )
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './Components/Homepage';
+import Dashboard from './Components/Dashboard';
+function App(){
+    
+    return(
+        <Router>
+        <Routes>
+          <Route path="/" element={<Dashboard />} /> {/* Home component */}
+           <Route path="/Login" element={<Login />} />
+           <Route path="/HomePage" element={<HomePage />} /> 
+        </Routes>
+      </Router>
+        
+)
 }
-
+  
 export default App
