@@ -18,38 +18,89 @@ function Login() {
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-
-    const handleSignUpSubmit = (event) => {
+    const handleSignUpSubmit = async (event) => {
         event.preventDefault();
         
         if (!isSubmitted) {
-            setIsSubmitted(true)
-            console.log("First SignUp submission, awaiting OTP.")
-            setOtp(true)
+           
+            try {
+                const response = await fetch('/api/auth/sign-up/Admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                console.log(response)
+                const data = await response.json();
+                if (response.ok) {
+                    console.log("First SignUp ");
+                    setIsSubmitted(true);
+                    setOtp(true);
+                } else {
+                    console.log("Error in SignUp:", data.message);
+                }
+            } catch (error) {
+                console.error("SignUp Error:", error);
+            }
         } else if (isOtp) {
-            console.log("SignUp form submitted with OTP:", formData)
-            navigate("/Homepage")
+            // OTP Verification request
+            // try {
+            //     const response = await fetch('/api/auth/verify-otp', {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         body: JSON.stringify({ email: formData.email, otp: formData.otp })
+            //     });
+
+                const data = await response.json();
+                if (response.ok) {
+                    console.log("SignUp form submitted with OTP:", data);
+                    navigate("/Homepage");
+                } else {
+                    console.log("Invalid OTP:", data.message);
+                }
+            // } catch (error) {
+            //     console.error("OTP Verification Error:", error);
+            // }
         }
     };
 
-
-    const handleLoginSubmit = (event) => {
+    const handleLoginSubmit = async (event) => {
         event.preventDefault();
         
-        console.log("Login form submitted:", formData)
-        navigate("/Homepage")
+        try {
+            const response = await fetch('/api/auth/login/Admin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log("Login successful:", data);
+                navigate("/Homepage");
+            } else {
+                console.log("Login failed:", data.message);
+            }
+        } catch (error) {
+            console.error("Login Error:", error);
+        }
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }))
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleFormSubmit = (event) => {
         if (action === "SignUp") {
             handleSignUpSubmit(event);
         } else {
-            handleLoginSubmit(event)
+            handleLoginSubmit(event);
         }
     };
 
@@ -63,7 +114,7 @@ function Login() {
                     <div className="text">{action}</div>
                     <div className="underLine"></div>
                 </div>
-                <form method="post" action="#" onSubmit={handleFormSubmit}>
+                <form method="post" onSubmit={handleFormSubmit}>
                     <div className="radioInput">
                         <label>
                             <input
@@ -108,17 +159,15 @@ function Login() {
                             />
                         </div>
                         {action === "Login" ? null : (
-                            <>
-                                <div className="input">
-                                    <input
-                                        type="phone"
-                                        placeholder="Phone"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            </>
+                            <div className="input">
+                                <input
+                                    type="text"
+                                    placeholder="Phone"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         )}
                         <div className="input">
                             <input
@@ -158,7 +207,7 @@ function Login() {
                         </div>
                     )}
                     <div className="formSubmit">
-                        <button type="button" className="btnSubmit" onClick={handleFormSubmit}>
+                        <button type="submit" className="btnSubmit">
                             {isOtp && action === "SignUp" ? "Submit OTP" : "Submit"}
                         </button>
                     </div>
