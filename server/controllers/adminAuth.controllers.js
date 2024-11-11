@@ -47,15 +47,11 @@ const registerAdmin  = async(req, res) =>{
 }
 
 const verifyOtp = async(req, res) => {
-    console.log(req.body)
     const userOtp = req.body.otp
     const email = req.params.email
     const shopid = req.params.shopid
-    console.log(userOtp, email)
     const users =  await Otps.find({email: email})
-    console.log("users",users)
     const singleUser = users[users.length - 1]
-    console.log("singleUser", singleUser)
     const password = singleUser.password
     if(userOtp === singleUser.otp){
         try {

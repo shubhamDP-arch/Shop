@@ -14,10 +14,8 @@ const home = async(req, res) => {
 }
 
 
-const addProduct = async(req, res) => {
+const insertProduct = async(req, res) => {
     console.log("Hii")
-
-    const name = req.body.productname;
     const shopid = req.shopid || "HOP002"
     console.log("Hiii Baby")
     const productName = req.body.productname;
@@ -26,6 +24,8 @@ const addProduct = async(req, res) => {
 
     /////////////
     const {supplierName, supplierEmail} = req.body;
+    console.log(supplierEmail, supplierName)
+    
     ///////////
 
     if(product)
@@ -92,6 +92,11 @@ const addProduct = async(req, res) => {
         console.log(existingSupplier)
         await existingSupplier.save();
     } else {
+        const supEmail = await supplierModel.find({supplierEmail: supplierEmail})
+        if(supEmail.length > 0)
+        {
+            return res.json({msg: "Supplier email already present. Check the username"})
+        }
         const newSupplier = await supplierModel.create({ supplierName, supplierEmail, products: [productName] });
         console.log(newSupplier)
         await newSupplier.save();
@@ -142,4 +147,8 @@ const updateProduct = async(req, res) => {
     return res.json(updateProduct)
 }
 
-module.exports = {home, addProduct, scanProduct, getProducts, productDetails, updateProduct}
+const soldProducts = async(req, res) => {
+    
+}
+
+module.exports = {home, insertProduct, scanProduct, getProducts, productDetails, updateProduct, soldProducts}
