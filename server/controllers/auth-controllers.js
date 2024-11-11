@@ -109,7 +109,10 @@ const scanProduct = async(req, res) => {
     const {data} = req.body;
     console.log("data", data)
     const fetchProduct = await Products.findOne({barcodeid: data})
-    console.log(fetchProduct.productname)
+    if(!fetchProduct)
+    {
+        return res.json({productname: "Scan Again"})
+    }
     return res.json({productname: fetchProduct.productname})
 }
 

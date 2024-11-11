@@ -17,10 +17,6 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  shopName: {
-    type: String,
-    required: true,
-  },
   shopID: {
     type: String,
     required: true,
