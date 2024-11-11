@@ -47,19 +47,19 @@ const registerAdmin  = async(req, res) =>{
 }
 
 const verifyOtp = async(req, res) => {
+    console.log(req.body)
     const userOtp = req.body.otp
     const email = req.params.email
     const shopid = req.params.shopid
     console.log(userOtp, email)
     const users =  await Otps.find({email: email})
+    console.log("users",users)
     const singleUser = users[users.length - 1]
+    console.log("singleUser", singleUser)
+    const password = singleUser.password
     if(userOtp === singleUser.otp){
         try {
-            const saltRounds = 10
-
-            const hashedPassword = await bcrypt.hash(singleUser.password, saltRounds)
-    
-            const userCreated = await Admin.create({adminName: singleUser.username, email, password: hashedPassword, shopID: shopid})
+            const userCreated = await Admin.create({adminName: singleUser.username, email, password, shopID: shopid})
             await Otps.deleteMany({email: email})
             return res.status(201).json({
                 sucmsg: "OTP Verifired: Registered Successfully",
@@ -75,12 +75,16 @@ const verifyOtp = async(req, res) => {
 }
  
 const loginAuth = async(req, res) =>{
-  const {email, password, adminName} = req.body
+  const {email, password} = req.body
+  console.log(email, password)
   const admin = await Admin.findOne({email: email})
+
   if (!admin) {
     return res.status(404).json({ message: "Admin not found" })
   }
+
   const isPasswordValid = await admin.isPasswordCorrect(password)
+
   if(!isPasswordValid){
     return res.status(401).json({ message: "Incorrect password" });
 
