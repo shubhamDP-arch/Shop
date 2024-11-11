@@ -8,7 +8,7 @@ const registerEmployee  = async(req, res) =>{
   const {EmployeeName, email, password, phone, shopName} = req.body;
   
   const admin = await Admin.findOne({shopName:shopName})
-  console.log(admin)
+
   const shopID = admin.shopID
 
   const newEmployee = new employeeModel({
