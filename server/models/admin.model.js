@@ -17,10 +17,6 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  shopName: {
-    type: String,
-    required: true,
-  },
   shopID: {
     type: String,
     required: true,
@@ -38,6 +34,7 @@ adminSchema.pre("save", async function (next) {
 
 adminSchema.methods.isPasswordCorrect = async function(password){
   return await bcrypt.compare(password, this.password)
+
 }
 adminSchema.methods.generateAccessToken = function(){
   return jwt.sign(
