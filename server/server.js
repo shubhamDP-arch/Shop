@@ -3,12 +3,12 @@ const express = require('express');
 const app = express()
 const authRouter = require("./router/auth-router");
 const connectDB = require("./utils/database")
-const PORT = 5000;
+const PORT = 7000;
 const cors = require("cors")
 
 
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: "*",
     method: "GET, POST, PUT, PATCH, DELETE, HEAD",
     credentials: true,
 }
