@@ -2,33 +2,76 @@ const { access } = require("fs");
 const Admin = require("../models/admin.model.js"); 
 const jwt = require("jsonwebtoken")
 const crypto = require("crypto")
+const Otps = require("../models/otp-model")
+const nodemailer = require("nodemailer")
+const bcrypt = require("bcrypt")
+
 const registerAdmin  = async(req, res) =>{
 
-  const {adminName, email, password, shopName} = req.body;
-  const shopID = crypto.randomBytes(8).toString("hex");
-  console.log(email)
-  console.log(shopID)
+    const {adminName, email, password} = req.body;
+    const shopID = crypto.randomBytes(8).toString("hex");
+    console.log(email)
+    console.log(shopID)
 
-  const user = await Admin.find({email: email});
   
-  if(user.length > 0){
-    console.log(user, "checcked")
-    return res.json({message:"User already registered"})
-  }
+    const otp = Math.floor(Math.random() * 9000) + 1000;
+    const userEmail = await Admin.find({email: email})
 
-  console.log("after")
-  const admin = new Admin({
-    adminName,
-    email,
-    password,
-    shopName,
-    shopID
-  })
+    if(userEmail.length != 0){
+        return res.status(404).json({alreadymsg: "User already registered. Please Login"})
+    }
+    
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_PASSWORD
+        }
+      });
+      
+      var mailOptions = {
+        from: process.env.MY_EMAIL,
+        to: email,
+        subject: 'Sending Email using Node.js',
+        text: `Your otp is ${otp}`
+      };
+      
+      transporter.sendMail(mailOptions, async function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+            const createOtp = await Otps.create({username: adminName, email: email, password, otp})
+            return res.status(200).json({msg: "Email Sent"})
+        }
+      });
+}
 
-  const savedAdmin = await admin.save();
-  return res.status(201).json(
-    savedAdmin
-)
+const verifyOtp = async(req, res) => {
+    const userOtp = req.body.otp
+    const email = req.params.email
+    const shopid = req.params.shopid
+    console.log(userOtp, email)
+    const users =  await Otps.find({email: email})
+    const singleUser = users[users.length - 1]
+    if(userOtp === singleUser.otp){
+        try {
+            const saltRounds = 10
+
+            const hashedPassword = await bcrypt.hash(singleUser.password, saltRounds)
+    
+            const userCreated = await Admin.create({adminName: singleUser.username, email, password: hashedPassword, shopID: shopid})
+            await Otps.deleteMany({email: email})
+            return res.status(201).json({
+                sucmsg: "OTP Verifired: Registered Successfully",
+                userId: userCreated._id.toString()
+            })
+    
+        } catch (error) {
+            console.log(error)
+        }
+    }else{
+        return res.status(500).json({inmsg: "OTP entered is Incorrect"})
+    }
 }
  
 const loginAuth = async(req, res) =>{
@@ -51,4 +94,4 @@ const loginAuth = async(req, res) =>{
 }
 
 
-module.exports = {registerAdmin, loginAuth}
+module.exports = {registerAdmin, loginAuth, verifyOtp}

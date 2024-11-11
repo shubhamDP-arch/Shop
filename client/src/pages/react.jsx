@@ -5,7 +5,10 @@ const BarcodeScanner = () => {
 
     const [data, setData] = useState("")
     const naviagte = useNavigate()
-    const [items, setItems] = useState([])
+    const [items, setItems] = useState("")
+    const [amountInput, setAmountInput] = useState(false)
+    const [itemDetails, setItemDetails] = useState([])
+    const [amount, setAmount] = useState(0)
 
     const startScanner = () => {
         Quagga.init({
@@ -72,9 +75,10 @@ const BarcodeScanner = () => {
                 const message = await response.json();
                 console.log(message)
 
-                if(message.productname)
+                if(message.productname != "Scan Again")
                 {
-                    setItems([...items, message.productname])
+                    setItems(message.productname)
+                    setAmountInput(true)
                     
                 }
             }
@@ -87,12 +91,28 @@ const BarcodeScanner = () => {
 
     const handleClick = () => {
         setData("")
+        setAmountInput(false)
+        setItems("")
         startScanner()
     }
 
     useEffect(() => {
         console.log(items)
     }, [items])
+
+    useEffect(() => {
+        console.log(itemDetails)
+    }, [itemDetails])
+
+    const handleAdd = (e) => {
+        e.preventDefault()
+        setItemDetails([...itemDetails, {productname: items, quantity: Number(amount)}])
+    }
+
+    const handleAmount = (e) => {
+        const {value} = e.target;
+        setAmount(value)
+    }
 
     return (
        <>
@@ -101,6 +121,15 @@ const BarcodeScanner = () => {
             <div id="interactive" style={{ width: '600px', height: '400px', border: '1px solid #ccc', marginBottom: '20px' }}></div>
             <div id="result" style={{ marginTop: '20px', fontSize: '1.2em' }}></div>
         </div>
+        {amountInput ? 
+            <>
+                <form onSubmit={handleAdd}  action="">
+                    <input onChange={handleAmount} type="number" placeholder='Quantity' name='quantity' />
+                    <button type='submit'>Add</button>
+                </form>
+            </>:
+            <></>
+        }
         <button onClick={handleClick}>Scan Again</button>
        </>
         
